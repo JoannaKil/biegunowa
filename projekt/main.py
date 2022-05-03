@@ -16,3 +16,4 @@ Cx_0 = float(input('Podaj Cx0 = '))
 Ae = float(input('Podaj wydluzenie efektywne = '))
 b = "{:.4f}".format(1/(3.14 * Ae))
 print('Biwgunowa analityczna dla samolotu: Cx = ' + str(Cx_0) + ' + ' + str(b) + ' * Cz^2')
+# tyle na razie
