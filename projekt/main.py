@@ -23,8 +23,36 @@ z = list(np.arange(Cz_n, Cz_max, 0.01))
 z.append(Cz_max)
 x = []
 Cx = 0
+Vx = []
+V_x = 0
+Vn = []
+V_n = 0
+Vs = []
+V_s = 0
+wx = []
+w_x = 0
+wn = []
+w_n = 0
+ws = []
+w_s = 0
+gam = []
+gamma = 0
+
 for i in z:
     Cx = Cx_0 + b * (i ** 2)
     x.append(Cx)
-print(len(z))
-print(len(x))
+    gamma = np.arctan(Cx / i)
+    gam.append(gamma)
+    V_x = ((2 * m_max * g)/((ro * S) * (((i ** 2) + (Cx ** 2)) ** 0.5))) ** 0.5
+    Vx.append(V_x)
+    V_n = ((2 * m_min * g) / ((ro * S) * (((i ** 2) + (Cx ** 2)) ** 0.5))) ** 0.5
+    Vn.append(V_n)
+    V_s = ((2 * m_sr * g) / ((ro * S) * (((i ** 2) + (Cx ** 2)) ** 0.5))) ** 0.5
+    Vs.append(V_s)
+    w_x = ((2 * m_max * g * (Cx ** 2))/(ro * S * (((i ** 2) + (Cx ** 2)) ** 1.5))) ** 0.5
+    wx.append(w_x)
+    w_n = ((2 * m_min * g * (Cx ** 2)) / (ro * S * (((i ** 2) + (Cx ** 2)) ** 1.5))) ** 0.5
+    wn.append(w_n)
+    w_s = ((2 * m_sr * g * (Cx ** 2)) / (ro * S * (((i ** 2) + (Cx ** 2)) ** 1.5))) ** 0.5
+    ws.append(w_s)
+print(Vs)
