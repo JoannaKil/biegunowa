@@ -1,68 +1,70 @@
-# ten kod to nie jest jakis super, na razie jest tak zebym to ja rozumiala co sie tu dzieje
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 g = 9.81
-h = float(input('Podaj wysokosc [m] = '))
+h = 6000
 ro = 1.225 * ((1 - (h / 44300)) ** 4.256)
-print('Gestosc na tej wysokosci wynosi = ' + str("{:.3f}".format(ro)) + ' [kg/m^3]')
-m_max = float(input("Podaj mase maksymalna samolotu = "))
-m_min = float(input("Podaj mase minimalna samolotu = "))
+m_max = 2717
+m_min = 1779
 m_sr = (m_min + m_max)/2
-print('Masa srednia = ' + str(m_sr) + ' [kg]')
-S = float(input('Podaj powierzchnie nosna = '))
-Cz_max = float(input('Podaj maksymalny wspolczynnik sily nosnej = '))
-V_max = float(input('Podaj predkosc maksymalna [m/s] = '))
+S = 17.1
+Cz_max = 1.52
+V_max = 125.5
 Cz_n = (1/3)*(2 * m_max * g)/(ro * S * (V_max ** 2))
-print('Cz_n = ' + str("{:.4f}".format(Cz_n)))
-Cx_0 = float(input('Podaj Cx0 = '))
-Ae = float(input('Podaj wydluzenie efektywne = '))
+Cx_0 = 0.03
+Ae = 5.974
 b = 1/(3.14 * Ae)
-print('Biegunowa analityczna dla samolotu: Cx = ' + str(Cx_0) + ' + ' + str("{:.4f}".format(b)) + ' * Cz^2')
-z = list(np.arange(Cz_n, Cz_max, 0.01))
-z.append(Cz_max)
-x = []
-Cx = 0
-Vx = []     # dla masy max
-V_x = 0
-Vn = []     # dla masy minimalnej
-V_n = 0
-Vs = []     # dla masy sredniej
-V_s = 0
-wx = []     # dla masy max
-w_x = 0
-wn = []     # dla masy minimalnej
-w_n = 0
-ws = []     # dla masy sredniej
-w_s = 0
-gam = []
-gamma = 0
 
-for i in z:
-    Cx = Cx_0 + b * (i ** 2)
-    x.append(Cx)
-    gamma = np.arctan(Cx / i)
-    gam.append(gamma)
-    V_x = ((2 * m_max * g)/((ro * S) * (((i ** 2) + (Cx ** 2)) ** 0.5))) ** 0.5
-    Vx.append(V_x)
-    V_n = ((2 * m_min * g) / ((ro * S) * (((i ** 2) + (Cx ** 2)) ** 0.5))) ** 0.5
-    Vn.append(V_n)
-    V_s = ((2 * m_sr * g) / ((ro * S) * (((i ** 2) + (Cx ** 2)) ** 0.5))) ** 0.5
-    Vs.append(V_s)
-    w_x = ((2 * m_max * g * (Cx ** 2))/(ro * S * (((i ** 2) + (Cx ** 2)) ** 1.5))) ** 0.5
-    wx.append(w_x)
-    w_n = ((2 * m_min * g * (Cx ** 2)) / (ro * S * (((i ** 2) + (Cx ** 2)) ** 1.5))) ** 0.5
-    wn.append(w_n)
-    w_s = ((2 * m_sr * g * (Cx ** 2)) / (ro * S * (((i ** 2) + (Cx ** 2)) ** 1.5))) ** 0.5
-    ws.append(w_s)
-"""
-print(z)
-print(x)
-print(Vx)
-print(wx)
-"""
-plt.plot(Vx, wx, label="masa maksymalna")
-plt.plot(Vn, wn, label="masa minimalna")
-plt.plot(Vs, ws, label="masa srednia")
+f_max = ((2 * m_max * g)/(ro * S)) ** 0.5
+f_sr = ((2 * m_sr * g)/(ro * S)) ** 0.5
+f_min = ((2 * m_min * g)/(ro * S)) ** 0.5
+
+df = pd.DataFrame({})
+df['Cz'] = np.arange(Cz_n, Cz_max+0.01, 0.01)
+df['Cx'] = Cx_0 + b * (df['Cz'] ** 2)
+df['i'] = (1 / (((df['Cz'] ** 2) + (df['Cx'] ** 2)) ** 0.5)) ** 0.5
+df['j'] = ((df['Cx'] ** 2) / (((df['Cz'] ** 2) + (df['Cx'] ** 2)) ** 1.5)) ** 0.5
+df['gamma'] = np.arctan(df['Cx'] / df['Cz'])
+df['V_max'] = f_max * df['i']
+df['V_sr'] = f_sr * df['i']
+df['V_min'] = f_min * df['i']
+df['w_max'] = f_max * df['j']
+df['w_sr'] = f_sr * df['j']
+df['w_min'] = f_min * df['j']
+
+Vopt_max = f_max * ((1 / ((3.14 * Ae * Cx_0) ** 0.5)) ** 0.5)
+Vopt_sr = f_sr * ((1 / ((3.14 * Ae * Cx_0) ** 0.5)) ** 0.5)
+Vopt_min = f_min * ((1 / ((3.14 * Ae * Cx_0) ** 0.5)) ** 0.5)
+wopt_max = f_max * (((4 * (Cx_0 ** 0.5)) / ((3.14 * Ae) ** 1.5)) ** 0.5)
+wopt_sr = f_sr * (((4 * (Cx_0 ** 0.5)) / ((3.14 * Ae) ** 1.5)) ** 0.5)
+wopt_min = f_min * (((4 * (Cx_0 ** 0.5)) / ((3.14 * Ae) ** 1.5)) ** 0.5)
+
+Vek_max = f_max * ((1 / ((3 * 3.14 * Ae * Cx_0) ** 0.5)) ** 0.5)
+Vek_sr = f_sr * ((1 / ((3 * 3.14 * Ae * Cx_0) ** 0.5)) ** 0.5)
+Vek_min = f_min * ((1 / ((3 * 3.14 * Ae * Cx_0) ** 0.5)) ** 0.5)
+wek_max = f_max * (((16 * (Cx_0 ** 0.5)) / ((3 * 3.14 * Ae) ** 1.5)) ** 0.5)
+wek_sr = f_sr * (((16 * (Cx_0 ** 0.5)) / ((3 * 3.14 * Ae) ** 1.5)) ** 0.5)
+wek_min = f_min * (((16 * (Cx_0 ** 0.5)) / ((3 * 3.14 * Ae) ** 1.5)) ** 0.5)
+
+print(df)
+print(Vopt_max)
+print(Vopt_sr)
+print(Vopt_min)
+print(wopt_max)
+print(wopt_sr)
+print(wopt_min)
+print(Vek_max)
+print(Vek_sr)
+print(Vek_min)
+print(wek_max)
+print(wek_sr)
+print(wek_min)
+
+plt.gca().invert_yaxis()
+
+plt.plot(df['V_max'], df['w_max'], label="masa maksymalna")
+plt.plot(df['V_sr'], df['w_sr'], label="masa srednia")
+plt.plot(df['V_min'], df['w_min'], label="masa minimalna")
 plt.xlabel("V [m/s]")
 plt.ylabel("w [m/s]")
 plt.legend()
