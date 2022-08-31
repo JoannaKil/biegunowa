@@ -57,7 +57,7 @@ K_min = 1 / np.tan(gamma_opt_min)
 
 K = (K_max + K_sr + K_min) / 3
 
-print("Doskonałość = " + str(K))
+print("Doskonałość = " + str("{:.4f}".format(K)))
 
 file = open("dane.csv", "w")
 df.to_csv('dane.csv')
