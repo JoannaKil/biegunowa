@@ -39,6 +39,8 @@ wopt_max = f_max * (((4 * (Cx_0 ** 0.5)) / ((3.14 * Ae) ** 1.5)) ** 0.5)
 wopt_sr = f_sr * (((4 * (Cx_0 ** 0.5)) / ((3.14 * Ae) ** 1.5)) ** 0.5)
 wopt_min = f_min * (((4 * (Cx_0 ** 0.5)) / ((3.14 * Ae) ** 1.5)) ** 0.5)
 
+
+
 Vek_max = f_max * ((1 / ((3 * 3.14 * Ae * Cx_0) ** 0.5)) ** 0.5)
 Vek_sr = f_sr * ((1 / ((3 * 3.14 * Ae * Cx_0) ** 0.5)) ** 0.5)
 Vek_min = f_min * ((1 / ((3 * 3.14 * Ae * Cx_0) ** 0.5)) ** 0.5)
@@ -46,19 +48,20 @@ wek_max = f_max * (((16 * (Cx_0 ** 0.5)) / ((3 * 3.14 * Ae) ** 1.5)) ** 0.5)
 wek_sr = f_sr * (((16 * (Cx_0 ** 0.5)) / ((3 * 3.14 * Ae) ** 1.5)) ** 0.5)
 wek_min = f_min * (((16 * (Cx_0 ** 0.5)) / ((3 * 3.14 * Ae) ** 1.5)) ** 0.5)
 
-print(df)
-print(Vopt_max)
-print(Vopt_sr)
-print(Vopt_min)
-print(wopt_max)
-print(wopt_sr)
-print(wopt_min)
-print(Vek_max)
-print(Vek_sr)
-print(Vek_min)
-print(wek_max)
-print(wek_sr)
-print(wek_min)
+gamma_opt_max = np.arcsin(wopt_max / Vopt_max)
+gamma_opt_sr = np.arcsin(wopt_sr / Vopt_sr)
+gamma_opt_min = np.arcsin(wopt_min / Vopt_min)
+K_max = 1 / np.tan(gamma_opt_max)
+K_sr = 1 / np.tan(gamma_opt_sr)
+K_min = 1 / np.tan(gamma_opt_min)
+
+K = (K_max + K_sr + K_min) / 3
+
+print(K)
+
+file = open("dane.csv", "w")
+df.to_csv('dane.csv')
+file.close()
 
 plt.gca().invert_yaxis()
 
@@ -68,4 +71,5 @@ plt.plot(df['V_min'], df['w_min'], label="masa minimalna")
 plt.xlabel("V [m/s]")
 plt.ylabel("w [m/s]")
 plt.legend()
+
 plt.show()
